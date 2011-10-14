@@ -1,3 +1,134 @@
+PHP class to get a short url using the Google API (goo.gl).
+
 Hiram E. Perez | @driverInside | hiram.eps@gmail.com
 
-This is the README file.
+copyright: CC Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) More Info: creativecommons.org/licenses/by-sa/3.0/
+
+cURL Library necesary. 
+
+# aptitude install php5-curl     in Debian systems p.e.
+
+How to use:
+
+<?php
+
+require 'gooShort.php';
+
+$go = new gooShort("Y0uRaP1K3y"); // your api key as param
+
+$url_short = $go->short("http://www.google.com/");
+print_r($url);
+// returns "http://goo.gl/fbsS"
+
+$url_short_array = $go->short_Array("http://www.google.com/");
+print_r($url_short_array);
+/* returns
+
+Array
+(
+    [kind] => urlshortener#url
+    [id] => http://goo.gl/fbsS
+    [longUrl] => http://www.google.com/
+)
+
+*/
+
+$url_long = $go->getLong("http://goo.gl/fbsS");
+print_r($url);
+// returns "http://www.google.com/"
+
+$url_long = $go->getLong_Array("http://goo.gl/fbsS", true);
+/* returns something like this
+...
+
+                    [browsers] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [count] => 3
+                                    [id] => Chrome
+                                )
+
+                            [1] => Array
+                                (
+                                    [count] => 2
+                                    [id] => Safari
+                                )
+
+                            [2] => Array
+                                (
+                                    [count] => 1
+                                    [id] => Internet Explorer
+                                )
+
+                        )
+...
+
+*/
+
+$url_short_err = $go->short("fdasfj;dlfjw[0u29[0f9[ ud9af[a ");
+print_r($url_short_err);  
+// returns "Invalid Value"
+
+$url_short_err = $go->short_Array("fdasfj;dlfjw[0u29[0f9[ ud9af[a ");
+print_r($url_short_err);
+/* return
+
+Array
+(
+    [error] => Array
+        (
+            [errors] => Array
+                (
+                    [0] => Array
+                        (
+                            [domain] => global
+                            [reason] => invalid
+                            [message] => Invalid Value
+                            [locationType] => parameter
+                            [location] => resource.longUrl
+                        )
+
+                )
+
+            [code] => 400
+            [message] => Invalid Value
+        )
+
+)
+
+*/
+
+$url_long_err = $go->getLong("http://goo.gl/fbfdfd");
+print_r($url_long_err);
+// returns "Not found"
+
+$url_long_err = $go->getLong_Array("http://goo.gl/fbfdfd", false);
+print_r($url_long_err); 
+/* returns
+
+Array
+(
+    [error] => Array
+        (
+            [errors] => Array
+                (
+                    [0] => Array
+                        (
+                            [domain] => global
+                            [reason] => notFound
+                            [message] => Not Found
+                        )
+
+                )
+
+            [code] => 404
+            [message] => Not Found
+        )
+
+)
+
+
+*/
+
+ ?>
